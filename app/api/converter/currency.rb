@@ -6,48 +6,6 @@ module Converter
     format :json
     rescue_from :all
 
-    helpers do
-      def get_exchange_rate(currency)
-        case currency
-        when 'NTD'
-          30
-        else
-          raise StandardError.new "no conversion found for currency #{currency}"
-        end
-      end
-    end
-
-
-
-    resource :converter do
-
-      desc 'convert currency',
-      headers: {
-        'Authorization' => {
-          description: 'Validates your authorization.',
-          required: true,
-        },
-      },
-        success: { code: 201, model: Entities::SavedEntity, message: 'Created' },
-        failure: [{ code: 404, model: Entities::NotFoundEntity, message: 'Not Found' },
-      ]
-
-      params do
-        requires :amount, type: Float
-        requires :to_currency, type: String
-      end
-
-      get :exchange do
-        converted_amount = params[:amount] * get_exchange_rate(params[:to_currency])
-        {
-          amount: converted_amount,
-          currency: params[:to_currency]
-        }
-      end
-
-    end
-
-
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
     resource :sites do
@@ -172,18 +130,15 @@ module Converter
   end
 # --------------------------------------------------------------------------------------------------
 
-
-
-
     add_swagger_documentation mount_path: '/swagger_doc',
                               schemes: ['https'],
                               host: 'localhost:3050',
                               doc_version: '1.0.1',
                               info: {
-                                title: 'Converter Api',
+                                title: 'Article Api',
                                 license: 'Proprietary',
                                 description: '
-**Converter is used to convert currency**
+**Article API takes care of all the backend processes.**
                                 ',
                               }
 
